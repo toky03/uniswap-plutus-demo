@@ -1,0 +1,55 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/gui-app/dist
+/gui-app/tmp
+/gui-app/out-tsc
+
+
+# dependencies
+/gui-app/node_modules
+
+# profiling files
+chrome-profiler-events*.json
+speed-measure-plugin*.json
+
+# IDEs and editors
+/gui-app/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# misc
+/gui-app/.sass-cache
+/gui-app/connect.lock
+/gui-app/coverage
+/gui-app/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/gui-app/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+
+
+# pab files
+*.cid
+symbol.json
+dist-newstyle/*
+uniswap-pab/dist-newstyle/*
+
+# binary files
+oracle-swap-demo

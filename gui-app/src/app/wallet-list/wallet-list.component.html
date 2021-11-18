@@ -1,0 +1,12 @@
+<div [class.blurred]="loading$ | async" class="wallet-content">
+  <mat-card
+    *ngFor="let wallet of wallets$ | async | sort; trackBy: trackByWalletName"
+  >
+    <mat-card-header
+      ><h1>Wallet {{ wallet }}</h1></mat-card-header
+    >
+    <button mat-stroked-button (click)="navigateToWallet(wallet)">
+      Checkout Wallet {{ wallet }}
+    </button>
+  </mat-card>
+</div>

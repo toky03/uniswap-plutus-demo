@@ -1,0 +1,50 @@
+<form [formGroup]="inputForm">
+  <mat-grid-list cols="3" rowHeight="80px">
+    <mat-grid-tile>
+      <h4>First Token</h4>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <h4>Second Token</h4>
+    </mat-grid-tile>
+    <mat-grid-tile rowspan="1">
+      <div *ngIf="validity$ | async as validationMessage">
+        {{ validationMessage }}
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile rowspan="2">
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <mat-select formControlName="tokenNameCoinA">
+          <mat-option
+            *ngFor="let tokenName of availableTokens"
+            [value]="tokenName"
+          >
+            {{ tokenName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile rowspan="2">
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <mat-select formControlName="tokenNameCoinB">
+          <mat-option
+            *ngFor="let tokenName of availableTokens"
+            [value]="tokenName"
+          >
+            {{ tokenName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile rowspan="2">
+      <button
+        mat-stroked-button
+        (click)="close()"
+        [disabled]="!inputForm.valid || !!(validity$ | async)"
+      >
+        Send
+      </button>
+    </mat-grid-tile>
+  </mat-grid-list>
+</form>

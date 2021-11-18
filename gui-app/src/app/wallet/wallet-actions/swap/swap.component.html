@@ -1,0 +1,56 @@
+<form [formGroup]="inputForm">
+  <mat-grid-list cols="3" rowHeight="80px">
+    <mat-grid-tile>
+      <h4>Swap Token</h4>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <h4>Request Token</h4>
+    </mat-grid-tile>
+    <mat-grid-tile rowspan="1">
+      <div *ngIf="validity$ | async as validationMessage">
+        {{ validationMessage }}
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <mat-select formControlName="swapCoinName">
+          <mat-option
+            *ngFor="let tokenName of availableTokens"
+            [value]="tokenName"
+          >
+            {{ tokenName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile rowspan="2">
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <mat-select formControlName="toCoinTokenName">
+          <mat-option
+            *ngFor="let tokenName of availableTokens"
+            [value]="tokenName"
+          >
+            {{ tokenName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile rowspan="2">
+      <button
+        mat-stroked-button
+        (click)="sendFunds()"
+        [disabled]="!inputForm.valid || !!(validity$ | async)"
+      >
+        Send
+      </button>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-form-field>
+        <mat-label>Amount</mat-label>
+        <input matInput type="number" formControlName="swapCoinAmount" />
+      </mat-form-field>
+    </mat-grid-tile>
+  </mat-grid-list>
+</form>

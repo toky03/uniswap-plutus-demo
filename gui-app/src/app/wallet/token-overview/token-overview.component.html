@@ -1,0 +1,4 @@
+<mat-card *ngIf="token">
+    <p  [matTooltip]="token.currencySymbol">{{ token.tokenName }}</p>
+    <p>Ammount: {{ token.amount | number }}</p>
+</mat-card>

@@ -1,0 +1,7 @@
+.wallet-content {
+    width: 100%;
+    padding-top: 10em;
+    flex-flow: wrap;
+    display: flex;
+    justify-content: space-around;
+}

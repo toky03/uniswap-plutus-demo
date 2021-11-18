@@ -1,0 +1,53 @@
+<button mat-stroked-button (click)="navigateToHome()">Navigate to Home</button>
+<mat-card class="header" *ngIf="(wallet$ | async) as wallet">
+  <h2>Wallet {{ wallet.coinWallet.walletName }}</h2>
+  <h3>Tokens</h3>
+  <div class="tokenWrapper">
+    <app-token-overview
+      *ngFor="let token of wallet.coinWallet.tokens | sortToken"
+      [token]="token"
+    ></app-token-overview>
+  </div>
+  <h3>Uniswap Pool Tokens</h3>
+  <div class="tokenWrapper">
+    <app-token-overview
+      *ngFor="let poolToken of wallet.poolWallet.tokens | sortToken"
+      [token]="poolToken"
+    ></app-token-overview>
+  </div>
+  <mat-tab-group>
+    <mat-tab label="Create Pool"
+      ><app-add-funds
+        [wallet]="wallet.coinWallet"
+        [hasMaxAmount]="true"
+        (addFunds)="onCreatePool(wallet.coinWallet.walletName, $event)"
+      ></app-add-funds
+    ></mat-tab>
+    <mat-tab label="Add Funds"
+      ><app-add-funds
+        [wallet]="wallet.coinWallet"
+        (addFunds)="onAddFunds(wallet.coinWallet.walletName, $event)"
+      ></app-add-funds
+    ></mat-tab>
+    <mat-tab label="Swap"
+      ><app-swap
+        [wallet]="wallet.coinWallet"
+        (swapCoin)="onSwapCoin(wallet.coinWallet.walletName, $event)"
+      ></app-swap
+    ></mat-tab>
+    <div *ngIf="wallet.poolWallet.tokens.length > 0">
+      <mat-tab label="Remove Funds"
+        ><app-remove
+          [pool]="wallet.poolWallet"
+          (removeFunds)="onRemoveFunds(wallet.coinWallet.walletName, $event)"
+        ></app-remove
+      ></mat-tab>
+      <mat-tab label="Close Pool"
+        ><app-close-pool
+          [pool]="wallet.poolWallet"
+          (closePool)="onClosePool(wallet.coinWallet.walletName, $event)"
+        ></app-close-pool
+      ></mat-tab>
+    </div>
+  </mat-tab-group>
+</mat-card>
