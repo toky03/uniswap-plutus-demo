@@ -44,6 +44,9 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Middleware app
+/middleware-app/static/*
+
 
 # pab files
 *.cid

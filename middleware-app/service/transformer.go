@@ -26,14 +26,21 @@ type oracleServiceImpl struct {
 	symbol        model.UnCurrencySymbol
 }
 
-
-func CreateOracleService() *oracleServiceImpl {
-	adapter := adapter.CrateAdapter()
-	return &oracleServiceImpl{
-		oracleAdapter: adapter,
-		wallets:       readWallets(),
-		symbol:        readSymbol(),
+func CreateOracleService() (*oracleServiceImpl, error) {
+	wallets, err := readWallets()
+	if err != nil {
+		return &oracleServiceImpl{}, err
 	}
+	symbol, err := readSymbol()
+	if err != nil {
+		return &oracleServiceImpl{}, err
+	}
+	oracleAdapter := adapter.CrateAdapter()
+	return &oracleServiceImpl{
+		oracleAdapter: oracleAdapter,
+		wallets:       wallets,
+		symbol:        symbol,
+	}, nil
 }
 
 func (s *oracleServiceImpl) ReadWalletNames() ([]string, error) {
@@ -76,7 +83,7 @@ func (s *oracleServiceImpl) CreatePool(walletId string, input model.FundsDto) er
 		return errors.New("No wallet found for id " + walletId)
 	}
 	err := s.oracleAdapter.CreatePool(walletUuid, input.ToCreatePayload(s.symbol.UnCurrencySymbol))
-	time.Sleep(2*time.Second)
+	time.Sleep(2 * time.Second)
 	if err != nil {
 		return err
 	}
@@ -93,7 +100,7 @@ func (s *oracleServiceImpl) ReadFunds(walletId string) (model.WalletDto, error) 
 	if err != nil {
 		return model.WalletDto{}, errors.New("error posting for funds, wallet: " + walletId + ", error:" + err.Error())
 	}
-	time.Sleep(2*time.Second)
+	time.Sleep(2 * time.Second)
 	walletStatus, err := s.oracleAdapter.ReadStatus(walletUuid)
 	if err != nil {
 		return model.WalletDto{}, errors.New("error with get request for status, wallet: " + walletId + ", error:" + err.Error())
@@ -108,17 +115,17 @@ func (s *oracleServiceImpl) ReadFunds(walletId string) (model.WalletDto, error) 
 	if err != nil {
 		return model.WalletDto{}, errors.New("error posting for funds, wallet: " + walletId + ", error:" + err.Error())
 	}
-	time.Sleep(2*time.Second)
+	time.Sleep(2 * time.Second)
 	poolStatus, err := s.oracleAdapter.ReadStatusPool(walletUuid)
 	if err != nil {
 		return model.WalletDto{}, errors.New("error with get request for status, wallet: " + walletId + ", error:" + err.Error())
 	}
 	pool := model.Pool{
-		Tokens:     model.FromOracleDtoPool(poolStatus),
+		Tokens: model.FromOracleDtoPool(poolStatus),
 	}
 
 	return model.WalletDto{
-		Pool: pool,
+		Pool:       pool,
 		CoinWallet: coinWallet,
 	}, nil
 
@@ -133,13 +140,13 @@ func (s *oracleServiceImpl) ReadPools(walletId string) (model.Pool, error) {
 	if err != nil {
 		return model.Pool{}, errors.New("error posting for funds, wallet: " + walletId + ", error:" + err.Error())
 	}
-	time.Sleep(2*time.Second)
+	time.Sleep(2 * time.Second)
 	walletStatus, err := s.oracleAdapter.ReadStatusPool(walletUuid)
 	if err != nil {
 		return model.Pool{}, errors.New("error with get request for status, wallet: " + walletId + ", error:" + err.Error())
 	}
 	return model.Pool{
-		Tokens:     model.FromOracleDtoPool(walletStatus),
+		Tokens: model.FromOracleDtoPool(walletStatus),
 	}, nil
 }
 
@@ -163,12 +170,10 @@ func (s *oracleServiceImpl) Swap(walletId string, input model.SwapDto) error {
 	}
 
 	err := s.oracleAdapter.Swap(walletUuid, input.ToSwapPayload(s.symbol.UnCurrencySymbol))
-	time.Sleep(2*time.Second)
+	time.Sleep(2 * time.Second)
 	if err != nil {
 		return err
 	}
 	_, err = s.oracleAdapter.ReadStatus(walletUuid)
 	return err
 }
-
-

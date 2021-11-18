@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
+	"time"
 
 	"github.com/toky03/oracle-swap-demo/model"
 	"github.com/toky03/oracle-swap-demo/service"
@@ -24,7 +27,7 @@ type oracleService interface {
 
 func main() {
 	handler := &handler{
-		oracleService: service.CreateOracleService(),
+		oracleService: createService(),
 	}
 	r := mux.NewRouter()
 	api := r.PathPrefix("/api").Subrouter()
@@ -41,11 +44,37 @@ func main() {
 	headersOk := handlers.AllowedHeaders([]string{"Content-Type"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "OPTIONS", "PUT"})
+	log.Println("Start Middleware on Port 3001")
 	log.Fatal(http.ListenAndServe(":3001", handlers.CORS(headersOk, originsOk, methodsOk)(r)))
 }
 
 type handler struct {
 	oracleService oracleService
+}
+
+func createService() oracleService {
+	timeout := os.Getenv("STARTUP_TIMEOUT_SECONDS")
+	if timeout == "" {
+		timeout = "60"
+	}
+	timeoutSeconds, err := strconv.Atoi(timeout)
+	if err != nil {
+		log.Fatalf("Startuptime %s cannot be converted to int", timeout)
+	}
+	expirationTime := time.Now().Add(time.Duration(timeoutSeconds) * time.Second)
+	for {
+		if time.Now().After(expirationTime) {
+			log.Fatalf("Timeout of %s seconds reached", timeout)
+		}
+		s, err := service.CreateOracleService()
+		if err == nil {
+			log.Println("Configuration files found")
+			return s
+		}
+		log.Println("Files not found retry in 2 seconds")
+		time.Sleep(2*time.Second)
+	}
+
 }
 
 func (h *handler) OptionsHandler(_ http.ResponseWriter, _ *http.Request) {
